@@ -2,12 +2,12 @@ var StlThumbnailer = require('.');
 var fs             = require('fs');
 
 var thumbnailer = new StlThumbnailer({
-    filePath:          __dirname + "/zamny_key.stl",
+    filePath:          __dirname + "/normals.stl",
     requestThumbnails: [
         {
-            width:               1000,
-            height:              1000,
-            cameraAngle:         [1, 1, 1],
+            width:               2400,
+            height:              2400,
+            cameraAngle:         [0, 0, 1],
             orthographic:        true,
             showMinorEdges:      false,
             shadeNormalsOpacity: 0,
