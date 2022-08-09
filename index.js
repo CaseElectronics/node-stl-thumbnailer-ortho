@@ -162,10 +162,7 @@ StlThumbnailer.prototype.processThumbnail = function(thumbnailSpec){
             camera.needsUpdate = true;
 
             if(thumbnailSpec.orthographic) {
-                console.log('zooming: ', .01 / geometry.boundingSphere.radius);
-                // TODO take into consideration the width / height of the image
-                camera.zoom = 200 / geometry.boundingSphere.radius;
-                // camera.zoom = 10;
+                camera.zoom = .45 * Math.min(thumbnailSpec.width, thumbnailSpec.height) / geometry.boundingSphere.radius;
             }
 
             camera.updateProjectionMatrix();
