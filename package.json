@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/instructables/node-stl-thumbnailer#readme",
   "dependencies": {
-    "canvas": "^1.6.2",
+    "canvas": "^2.9.3",
     "lodash": "^4.17.4",
     "request": "^2.79.0",
     "three": "^0.84.0"

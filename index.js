@@ -1,7 +1,7 @@
 var fs = require("fs"),             // load STLs from filesystem
     request = require("request"),   // load STLs from urls
-    THREE = require("three"),     
-    Canvas = require("canvas"),
+    THREE = require("three"),
+    {createCanvas, Canvas, Image} = require("canvas"),
     _ = require("lodash");
 
 // Assign this to global so that the subsequent modules can extend it:
@@ -122,9 +122,9 @@ StlThumbnailer.prototype.processThumbnail = function(thumbnailSpec){
             global.document = {
                 createElement: function (tag) {
                     if (tag === "img") {
-                        return new Canvas.Image();
+                        return new Image();
                     } else if (tag === "canvas") {
-                        return new Canvas(width, height);
+                        return createCanvas(width, height);
                     }
                 },
                 createElementNS: function(namespace,tag){
@@ -135,7 +135,9 @@ StlThumbnailer.prototype.processThumbnail = function(thumbnailSpec){
             // Prepare the scene, renderer, and camera
             var width = thumbnailSpec.width,
                 height = thumbnailSpec.height,
-                camera = new THREE.PerspectiveCamera(30, width / height, 1, 1000),
+                camera = thumbnailSpec.orthographic
+                    ? new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000)
+                    : new THREE.PerspectiveCamera(30, width / height, 1, 1000),
                 scene = new THREE.Scene(),
                 renderer = new THREE.CanvasRenderer(),
                 geometry = that.getGeometry();
@@ -158,14 +160,22 @@ StlThumbnailer.prototype.processThumbnail = function(thumbnailSpec){
             var newPosition = camera.position.clone().normalize().multiplyScalar(distance);
             camera.position.set(newPosition.x,newPosition.y,newPosition.z);
             camera.needsUpdate = true;
+
+            if(thumbnailSpec.orthographic) {
+                console.log('zooming: ', .01 / geometry.boundingSphere.radius);
+                // TODO take into consideration the width / height of the image
+                camera.zoom = 200 / geometry.boundingSphere.radius;
+                // camera.zoom = 10;
+            }
+
             camera.updateProjectionMatrix();
 
             // Get materials according to requested characteristics of the output render
             // TODO: Blending Modes?
-            if (thumbnailSpec.metallicOpacity > 0) scene.add( that.getMetallicMesh(geometry, thumbnailSpec.metallicOpacity) );
+            // if (thumbnailSpec.metallicOpacity > 0) scene.add( that.getMetallicMesh(geometry, thumbnailSpec.metallicOpacity) );
             if (thumbnailSpec.baseOpacity > 0)scene.add( that.getBasicMesh(geometry, thumbnailSpec.baseOpacity, thumbnailSpec.baseColor ) );
-            if (thumbnailSpec.shadeNormalsOpacity > 0)scene.add( that.getNormalMesh(geometry, thumbnailSpec.shadeNormalsOpacity) );        
-            if (thumbnailSpec.enhanceMajorEdges > 0)scene.add( that.getEdgeLine(geometry, thumbnailSpec.baseLineweight, thumbnailSpec.lineColor) );
+            // if (thumbnailSpec.shadeNormalsOpacity > 0)scene.add( that.getNormalMesh(geometry, thumbnailSpec.shadeNormalsOpacity) );
+            // if (thumbnailSpec.enhanceMajorEdges > 0)scene.add( that.getEdgeLine(geometry, thumbnailSpec.baseLineweight, thumbnailSpec.lineColor) );
 
             renderer.render(scene, camera);
             resolve(renderer.domElement);
