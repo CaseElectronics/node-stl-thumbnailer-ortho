@@ -168,11 +168,10 @@ StlThumbnailer.prototype.processThumbnail = function(thumbnailSpec){
             camera.updateProjectionMatrix();
 
             // Get materials according to requested characteristics of the output render
-            // TODO: Blending Modes?
-            // if (thumbnailSpec.metallicOpacity > 0) scene.add( that.getMetallicMesh(geometry, thumbnailSpec.metallicOpacity) );
-            if (thumbnailSpec.baseOpacity > 0)scene.add( that.getBasicMesh(geometry, thumbnailSpec.baseOpacity, thumbnailSpec.baseColor ) );
-            // if (thumbnailSpec.shadeNormalsOpacity > 0)scene.add( that.getNormalMesh(geometry, thumbnailSpec.shadeNormalsOpacity) );
-            // if (thumbnailSpec.enhanceMajorEdges > 0)scene.add( that.getEdgeLine(geometry, thumbnailSpec.baseLineweight, thumbnailSpec.lineColor) );
+            if (thumbnailSpec.metallicOpacity > 0) scene.add( that.getMetallicMesh(geometry, thumbnailSpec.metallicOpacity) );
+            if (thumbnailSpec.baseOpacity > 0) scene.add( that.getBasicMesh(geometry, thumbnailSpec.baseOpacity, thumbnailSpec.baseColor ) );
+            if (thumbnailSpec.shadeNormalsOpacity > 0)scene.add( that.getNormalMesh(geometry, thumbnailSpec.shadeNormalsOpacity) );
+            if (thumbnailSpec.enhanceMajorEdges > 0)scene.add( that.getEdgeLine(geometry, thumbnailSpec.baseLineweight, thumbnailSpec.lineColor) );
 
             renderer.render(scene, camera);
             resolve(renderer.domElement);
